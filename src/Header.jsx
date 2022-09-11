@@ -1,9 +1,14 @@
 import React from 'react'
 
-const Header = () => {
+const Header = ({selectedTeam,teamMenberCount}) => {
   return (
-    <header>
-        <h1 className='mt-4 p5 bg-primary text-white rounded'>Header</h1>
+    <header className='container'>
+      <div className='row justify-content-center'>
+        <div className='col-8'>
+          <h1 className='mt-4 p5'>{selectedTeam} は{teamMenberCount} 人います</h1>
+        </div>
+      </div>
+       
     </header>
   )
 }

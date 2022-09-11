@@ -2,89 +2,92 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from './Header';
-import Content from './Content';
 import Footer from './Footer';
 import Employees from './Employees';
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
+import {BrowserRouter as Router, Route,Routes} from "react-router-dom"
+import Team from './Team';
+import Nav from './Nav';
+import NotFound from './Notfound';
 
 function App() {
-  const [selectedTeam,setTeam] = useState("Apple")
+  const [selectedTeam,setTeam] = useState(JSON.parse(localStorage.getItem("selectTeam")) || "Google")
 
 
-  const [employees,setEmployees] = useState([{
+  const [employees,setEmployees] = useState(JSON.parse(localStorage.getItem("employeeList")) || [{
     id: 1,
     fullName: "Bob Jones",
-    designation: "JavaScript エンジニア",
+    designation: "JavaScript",
     gender: "male",
     teamName: "Google"
   },
   {
     id: 2,
     fullName: "Jill Bailey",
-    designation: "Node エンジニア",
+    designation: "Node",
     gender: "female",
     teamName: "Google"
   },
   {
     id: 3,
     fullName: "Gail Shepherd",
-    designation: "Java エンジニア",
+    designation: "Java",
     gender: "female",
     teamName: "Google"
   },
   {
     id: 4,
     fullName: "Sam Reynolds",
-    designation: "React エンジニア",
+    designation: "React",
     gender: "male",
     teamName: "Facebook"
   },
   {
     id: 5,
     fullName: "David Henry",
-    designation: "DotNet エンジニア",
+    designation: "DotNet",
     gender: "male",
     teamName: "Facebook"
   },
   {
     id: 6,
     fullName: "Sarah Blake",
-    designation: "SQL Server DBA　エンジニア",
+    designation: "SQL Server DBA",
     gender: "female",
     teamName: "Facebook"
   },
   {
     id: 7,
     fullName: "James Bennet",
-    designation: "Angular エンジニア",
+    designation: "Angular ",
     gender: "male",
     teamName: "Amazon"
   },
   {
     id: 8,
     fullName: "Jessica Faye",
-    designation: "API エンジニア",
+    designation: "API",
     gender: "female",
     teamName: "Amazon"
   },
   {
     id: 9,
     fullName: "Lita Stone",
-    designation: "C++ エンジニア",
+    designation: "C++",
     gender: "female",
     teamName: "Amazon"
   },
   {
     id: 10,
     fullName: "Daniel Young",
-    designation: "Python エンジニア",
+    designation: "Python",
     gender: "male",
     teamName: "Apple"
   },
   {
     id: 11,
     fullName: "Adrian Jacobs",
-    designation: "Vue エンジニア",
+    designation: "Vue",
     gender: "male",
     teamName: "Apple"
   },
@@ -92,10 +95,21 @@ function App() {
   {
     id: 12,
     fullName: "Shodai Yabuki",
-    designation: "iOS エンジニア",
+    designation: "iOS",
     gender: "male",
     teamName: "Apple"
   }])
+
+  useEffect(() =>{
+    //localにemployeesを保存する
+    console.log("employeeを変更しました")
+    localStorage.setItem("employeeList",JSON.stringify(employees))
+  },[employees])
+  useEffect(() =>{
+    //localにemployeesを保存する
+    console.log("選択を変更しました")
+    localStorage.setItem("selectTeam",JSON.stringify(selectedTeam))
+  },[selectedTeam])
 
   function handleTeamChange(event){
     setTeam(event.target.value)
@@ -119,12 +133,31 @@ function App() {
 
     
   }
+  
   return (
    <div>
-    <Header/ >
-    <Content/ >
-    <Employees employees={employees} selectedTeam={selectedTeam} handleCardClick={handleCardClick} handleTeamChange={handleTeamChange}/>
-    <Footer/ >
+    <Router>
+      <Nav/>
+      <Header selectedTeam={selectedTeam} teamMenberCount={employees.filter((employee) => employee.teamName === selectedTeam).length }/ >
+      <Routes>
+        <Route path='/' element={
+              <Employees  employees={employees} 
+              selectedTeam={selectedTeam} 
+              handleCardClick={handleCardClick}
+              handleTeamChange={handleTeamChange}/>}>
+        </Route>
+        <Route path='/team' element={<Team employees={employees} 
+                                          selectTeam={selectedTeam} 
+                                          setTeam={setTeam}/>}>
+        </Route>
+        <Route path='/*' element={<NotFound/ >}>
+        </Route>
+      </Routes>
+     
+      
+      <Footer/ >
+    </Router>
+    
    </div>
   );
 }
